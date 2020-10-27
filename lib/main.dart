@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:lister/screens/mainPage.dart';
+import 'package:lister/services/user_service.dart';
+import 'models/user.dart';
 
 void main() => runApp(MaterialApp(
-      home: MainPage(),
+      home: Home(),
       debugShowCheckedModeBanner: false,
     ));
 
@@ -23,7 +25,8 @@ class _HomeState extends State<Home> {
           child: ListView(
             children: <Widget>[
               Padding(
-                padding: EdgeInsets.only(top: MediaQuery.of(context).size.height/16, bottom:10),
+                padding: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.height / 16, bottom: 10),
                 child: Container(
                   width: 200.0,
                   height: 70.0,
@@ -57,7 +60,9 @@ class _HomeState extends State<Home> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(top: MediaQuery.of(context).size.height/16, bottom: MediaQuery.of(context).size.height/35),
+                padding: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.height / 16,
+                    bottom: MediaQuery.of(context).size.height / 35),
                 child: Container(
                   height: 240.0,
                   width: MediaQuery.of(context).size.width,
@@ -79,7 +84,10 @@ class _HomeState extends State<Home> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(top: MediaQuery.of(context).size.height/10, left: 10.0, right: 10.0),
+                padding: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.height / 10,
+                    left: 10.0,
+                    right: 10.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
@@ -140,9 +148,10 @@ class SignPage extends StatefulWidget {
 }
 
 class _SignPageState extends State<SignPage> {
-  TextEditingController userName_controller = new TextEditingController();
+  TextEditingController user_Name_controller = new TextEditingController();
   TextEditingController username_controller = new TextEditingController();
   TextEditingController userpassword_controller = new TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -152,33 +161,34 @@ class _SignPageState extends State<SignPage> {
         backgroundColor: Colors.purple[900],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: EdgeInsets.all(8.0),
         child: Container(
           color: Colors.white,
           alignment: Alignment.center,
           child: ListView(
             children: <Widget>[
               Padding(
-                padding: EdgeInsets.only(top: 20.0,bottom:8.0),
+                padding: EdgeInsets.only(top: 20.0, bottom: 8.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
                       "Welcome!",
-                      style: TextStyle(fontSize: 23.0, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontSize: 23.0, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
               ),
               Container(
-                margin: EdgeInsets.only(left:24.0, right:24.0),
+                margin: EdgeInsets.only(left: 24.0, right: 24.0),
                 width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height/3,
+                height: MediaQuery.of(context).size.height / 2,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     TextFormField(
-                      controller: userName_controller,
+                      controller: user_Name_controller,
                       decoration: InputDecoration(
                         labelText: "Your name",
                         labelStyle: TextStyle(fontSize: 20.0),
@@ -204,14 +214,30 @@ class _SignPageState extends State<SignPage> {
                       width: 330.0,
                       height: 50.0,
                       child: RaisedButton(
-                        onPressed: () {
-                            
+                        onPressed: () async {
+                          var userObject = User();
+                          userObject.name = user_Name_controller.text;
+                          userObject.username = username_controller.text;
+                          userObject.password = userpassword_controller.text;
+
+                          var _userService = UserService();
+                          var result = await _userService.saveUser(userObject);
+                          if (result > 0) {
+                            Navigator.pop(context);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MainPage()),
+                            );
+                            print("user criado\n");
+                          }
                         },
                         child: Text("Sign up",
-                          style: TextStyle(fontSize: 23.0, color: Colors.white)),
+                            style:
+                                TextStyle(fontSize: 23.0, color: Colors.white)),
                         color: Colors.purple[900],
                         shape: RoundedRectangleBorder(
-                        borderRadius: new BorderRadius.circular(5.0),
+                          borderRadius: new BorderRadius.circular(5.0),
                         ),
                       ),
                     ),
@@ -257,15 +283,16 @@ class _LoginPageState extends State<LoginPage> {
                   children: [
                     Text(
                       "Welcome back!",
-                      style: TextStyle(fontSize: 23.0, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontSize: 23.0, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
               ),
               Container(
-                margin: EdgeInsets.only(left:24.0, right:24.0),
+                margin: EdgeInsets.only(left: 24.0, right: 24.0),
                 width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height/3,
+                height: MediaQuery.of(context).size.height / 3,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -289,14 +316,25 @@ class _LoginPageState extends State<LoginPage> {
                       width: 330.0,
                       height: 50.0,
                       child: RaisedButton(
-                        onPressed: () {
-                            
+                        onPressed: () async {
+                          var _userService = UserService();
+                          var result = await _userService.readUser(username_controller.text,userpassword_controller.text);
+                          if (result != null)
+                            Navigator.pop(context);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => MainPage()),
+                            );
+                            print("user logou\n");
+                          
                         },
                         child: Text("Log in",
-                          style: TextStyle(fontSize: 23.0, color: Colors.white)),
+                            style:
+                                TextStyle(fontSize: 23.0, color: Colors.white)),
                         color: Colors.purple[900],
                         shape: RoundedRectangleBorder(
-                        borderRadius: new BorderRadius.circular(5.0),
+                          borderRadius: new BorderRadius.circular(5.0),
                         ),
                       ),
                     ),

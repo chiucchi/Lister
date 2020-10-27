@@ -14,7 +14,7 @@ class CategoryService {
   }
 
   // ler os dados da table
-  readCategories() async {
+  readCategories() async { // passar o userid
     return await _repository.readData('categories');
   }
 

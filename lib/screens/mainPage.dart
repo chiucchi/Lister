@@ -12,6 +12,10 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   TodoService _todoService;
   List<Todo> _todoList = List<Todo>();
+  var _edittodoNameController = TextEditingController();
+  var _edittodoDescriptionController = TextEditingController();
+  var _todo = Todo();
+  var todo;
 
   @override
   initState() {
@@ -33,6 +37,7 @@ class _MainPageState extends State<MainPage> {
         model.description = todo['description'];
         model.category = todo['category'];
         model.isFinished = todo['isFinished'];
+        model.userid = todo['userid'];
         _todoList.add(model);
       });
     });
@@ -67,6 +72,7 @@ class _MainPageState extends State<MainPage> {
         });
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,9 +88,7 @@ class _MainPageState extends State<MainPage> {
             return Padding(
               padding: EdgeInsets.only(top: 8.0, left: 8.0, right: 8.0),
               child: Card(
-                elevation: 8,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(0)),
+                elevation: 8.0,
                 child: ListTile(
                   title: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -98,7 +102,7 @@ class _MainPageState extends State<MainPage> {
                       ),
                     ],
                   ),
-                  subtitle: Text(_todoList[index].category),
+                  subtitle: Text(_todoList[index].description),
                 ),
               ),
             );

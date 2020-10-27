@@ -14,9 +14,8 @@ class Repository {
     if (_database != null) return _database;
     _database = await _databaseConnection.setDatabase();
 
-    return _database;
-  }
-
+        
+     }
   insertData(table, data) async {
     var connection = await database;
     return await connection.insert(table, data);
@@ -31,6 +30,11 @@ class Repository {
     var connection = await database;
     return await connection.query(table, where: 'id=?', whereArgs: [itemId]);
   }
+
+  readDataByUser(table, username, password) async {
+    var connection = await database;
+    return await connection.query(table, where: 'username=?', whereArgs:[username]);
+  } // arrumar essa query, ela vai deixar passar o user com qualquer senha
 
   updateData(table, data) async {
     var connection = await database;

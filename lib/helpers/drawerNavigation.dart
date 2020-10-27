@@ -1,21 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:lister/main.dart';
+import 'package:lister/models/user.dart';
 import 'package:lister/screens/categories.dart';
 import 'package:lister/screens/mainPage.dart';
 import 'package:lister/screens/todos_by_category.dart';
 import 'package:lister/services/category_services.dart';
 
 class DrawerNavigation extends StatefulWidget {
+  User userObject;
+
+  DrawerNavigation({userObject});
+
   @override
-  _DrawerNavigationState createState() => _DrawerNavigationState();
+  _DrawerNavigationState createState() => _DrawerNavigationState(userObject);
 }
 
 class _DrawerNavigationState extends State<DrawerNavigation> {
   List<Widget> _categoryList = List<Widget>();
   CategoryService _categoryService = CategoryService();
 
+  User userObject;
+  _DrawerNavigationState(this.userObject);
+
   @override
-  initState(){
+  initState() {
     super.initState();
     getAllCategories();
   }
@@ -28,7 +36,9 @@ class _DrawerNavigationState extends State<DrawerNavigation> {
           onTap: () => Navigator.push(
               context,
               new MaterialPageRoute(
-                  builder: (context) => new TodosByCategory(category: category['name'],))),
+                  builder: (context) => new TodosByCategory(
+                        category: category['name'],
+                      ))),
           child: ListTile(
             title: Text(category['name']),
           ),
@@ -47,8 +57,8 @@ class _DrawerNavigationState extends State<DrawerNavigation> {
               currentAccountPicture: CircleAvatar(
                   backgroundImage: NetworkImage(
                       'https://cdn.onlinewebfonts.com/svg/img_357118.png')),
-              accountName: Text('uchi'),
-              accountEmail: Text('uchi@dev.com'),
+              accountName: Text('arrumar'),
+              accountEmail: Text('arrumar@uol.com'),
               decoration: BoxDecoration(color: Colors.purple[900]),
             ),
             ListTile(

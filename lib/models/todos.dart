@@ -4,6 +4,7 @@ class Todo {
   String description;
   String category;
   int isFinished;
+  int userid;
 
   todoMap() {
     var mapping = Map<String, dynamic>();
@@ -12,6 +13,7 @@ class Todo {
     mapping['description'] = description;
     mapping['category'] = category;
     mapping['isFinished'] = isFinished;
+    mapping['userid'] = userid;
 
     return mapping;
   }

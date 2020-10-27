@@ -15,10 +15,13 @@ class DatabaseConnection {
 
   _onCreatingDatabase(Database database, int version) async {
     await database.execute(
-        "CREATE TABLE categories(id INTEGER PRIMARY KEY, name TEXT, description TEXT)");
+        "CREATE TABLE categories(id INTEGER PRIMARY KEY, name TEXT, description TEXT, userid INTEGER)");
 
     // Create table todos
     await database.execute(
-        "CREATE TABLE todos(id INTEGER PRIMARY KEY, title TEXT, description TEXT, category TEXT, isFinished INTEGER)");
+        "CREATE TABLE todos(id INTEGER PRIMARY KEY, title TEXT, description TEXT, category TEXT, isFinished INTEGER, userid INTEGER)");
+  
+    // Create table users
+    await database.execute("CREATE TABLE users(id INTEGER PRIMARY KEY, name TEXT, username TEXT, password TEXT)");
   }
 }

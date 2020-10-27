@@ -30,10 +30,12 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     var categories = await _categoryService.readCategories();
     categories.forEach((category) {
       setState(() {
+       // if (category.userid) {}
         var categoryModel = Category();
         categoryModel.name = category['name'];
         categoryModel.description = category['description'];
         categoryModel.id = category['id'];
+        categoryModel.userid = category['userid'];
         _categoryList.add(categoryModel);
       });
     });
@@ -65,7 +67,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                 onPressed: () async {
                   _category.name = _categoryNameController.text;
                   _category.description = _categoryDescriptionController.text;
-                 
+
                   var result = await _categoryService.saveCategory(_category);
                   if (result > 0) {
                     Navigator.pop(context);
@@ -169,8 +171,8 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
               ),
               FlatButton(
                 onPressed: () async {
-                  
-                  var result = await _categoryService.deleteCategory(categoryId);
+                  var result =
+                      await _categoryService.deleteCategory(categoryId);
                   if (result > 0) {
                     Navigator.pop(context);
                     getAllCategories();
@@ -220,10 +222,10 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                     children: [
                       Text(_categoryList[index].name),
                       IconButton(
-                          icon: Icon(Icons.delete, color: Colors.red),
-                          onPressed: () {
-                            _deleteFormDialog(context, _categoryList[index].id);
-                          },
+                        icon: Icon(Icons.delete, color: Colors.red),
+                        onPressed: () {
+                          _deleteFormDialog(context, _categoryList[index].id);
+                        },
                       ),
                     ],
                   ),
