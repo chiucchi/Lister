@@ -5,6 +5,9 @@ import 'package:lister/services/category_services.dart';
 import 'package:lister/services/todo_service.dart';
 
 class ToDo extends StatefulWidget {
+  int _userid;
+  ToDo(this._userid);
+
   @override
   _ToDoState createState() => _ToDoState();
 }
@@ -14,9 +17,11 @@ class _ToDoState extends State<ToDo> {
   var todoDescriptionController = new TextEditingController();
   var _selectedValue;
   var _categories = List<DropdownMenuItem>();
+  int _userid;
 
   @override
   void initState() {
+    _userid = widget._userid;
     super.initState();
     _loadCategories();
   }
@@ -26,10 +31,12 @@ class _ToDoState extends State<ToDo> {
     var categories = await _categoryService.readCategories();
     categories.forEach((category) {
       setState(() {
-        _categories.add(DropdownMenuItem(
-          child: Text(category['name']),
-          value: category['name'],
-        ));
+        if (category['userid'] == _userid) {
+          _categories.add(DropdownMenuItem(
+            child: Text(category['name']),
+            value: category['name'],
+          ));
+        }
       });
     });
   }
@@ -92,6 +99,7 @@ class _ToDoState extends State<ToDo> {
                   todoObject.description = todoDescriptionController.text;
                   todoObject.category = _selectedValue.toString();
                   todoObject.isFinished = 0;
+                  todoObject.userid = _userid;
 
                   var _todoService = TodoService();
                   var result = await _todoService.saveTodo(todoObject);
@@ -99,7 +107,8 @@ class _ToDoState extends State<ToDo> {
                     Navigator.pop(context);
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => MainPage()),
+                      MaterialPageRoute(
+                          builder: (context) => MainPage(_userid)),
                     );
                   }
                 },

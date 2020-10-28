@@ -5,6 +5,9 @@ import 'package:lister/screens/todo.dart';
 import 'package:lister/services/todo_service.dart';
 
 class MainPage extends StatefulWidget {
+  final int _userid;
+  MainPage(this._userid);
+
   @override
   _MainPageState createState() => _MainPageState();
 }
@@ -16,11 +19,13 @@ class _MainPageState extends State<MainPage> {
   var _edittodoDescriptionController = TextEditingController();
   var _todo = Todo();
   var todo;
+  int _userid;
 
   @override
   initState() {
     super.initState();
     getAllTodos();
+    _userid = widget._userid;
   }
 
   getAllTodos() async {
@@ -38,7 +43,9 @@ class _MainPageState extends State<MainPage> {
         model.category = todo['category'];
         model.isFinished = todo['isFinished'];
         model.userid = todo['userid'];
-        _todoList.add(model);
+        if (model.userid == _userid) {
+          _todoList.add(model);
+        }
       });
     });
   }
@@ -72,7 +79,6 @@ class _MainPageState extends State<MainPage> {
         });
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,7 +87,7 @@ class _MainPageState extends State<MainPage> {
         title: Text("LISTER", style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.purple[900],
       ),
-      drawer: DrawerNavigation(),
+      drawer: DrawerNavigation(_userid),
       body: ListView.builder(
           itemCount: _todoList.length,
           itemBuilder: (context, index) {
@@ -112,7 +118,7 @@ class _MainPageState extends State<MainPage> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => ToDo()),
+            MaterialPageRoute(builder: (context) => ToDo(_userid)),
           );
         },
         child: Icon(Icons.add, color: Colors.white),

@@ -5,6 +5,9 @@ import 'package:lister/screens/mainPage.dart';
 import '../services/category_services.dart';
 
 class CategoriesScreen extends StatefulWidget {
+  final int _userid;
+  CategoriesScreen(this._userid);
+
   @override
   _CategoriesScreenState createState() => _CategoriesScreenState();
 }
@@ -18,11 +21,13 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   var category;
   var _categoryService = CategoryService();
   List<Category> _categoryList = List<Category>();
+  int _userid;
 
   @override
   void initState() {
     super.initState();
     getAllCategories();
+    _userid = widget._userid;
   }
 
   getAllCategories() async {
@@ -30,13 +35,14 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     var categories = await _categoryService.readCategories();
     categories.forEach((category) {
       setState(() {
-       // if (category.userid) {}
         var categoryModel = Category();
         categoryModel.name = category['name'];
         categoryModel.description = category['description'];
         categoryModel.id = category['id'];
         categoryModel.userid = category['userid'];
-        _categoryList.add(categoryModel);
+        if (categoryModel.userid == _userid){
+          _categoryList.add(categoryModel);
+        }
       });
     });
   }
@@ -67,6 +73,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                 onPressed: () async {
                   _category.name = _categoryNameController.text;
                   _category.description = _categoryDescriptionController.text;
+                  _category.userid = _userid;
 
                   var result = await _categoryService.saveCategory(_category);
                   if (result > 0) {
@@ -195,7 +202,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => MainPage()),
+              MaterialPageRoute(builder: (context) => MainPage(_userid)),
             );
           },
           child: Icon(Icons.arrow_back, color: Colors.white),

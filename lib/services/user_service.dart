@@ -9,12 +9,14 @@ class UserService {
   }
 
   saveUser(User user) async {
-    return await _repository.insertData('users', user.userMap());  
+    return await _repository.insertData('users', user.userMap());
   }
 
   readUser(username, password) async {
     return await _repository.readDataByUser('users', username, password);
   }
 
+  getUserId(username) async {
+    return await _repository.readUserId('users', username);
+  }
 }
-

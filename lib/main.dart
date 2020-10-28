@@ -151,6 +151,7 @@ class _SignPageState extends State<SignPage> {
   TextEditingController user_Name_controller = new TextEditingController();
   TextEditingController username_controller = new TextEditingController();
   TextEditingController userpassword_controller = new TextEditingController();
+  
 
   @override
   Widget build(BuildContext context) {
@@ -215,21 +216,22 @@ class _SignPageState extends State<SignPage> {
                       height: 50.0,
                       child: RaisedButton(
                         onPressed: () async {
-                          var userObject = User();
-                          userObject.name = user_Name_controller.text;
-                          userObject.username = username_controller.text;
-                          userObject.password = userpassword_controller.text;
+                          var userObject = User(null,user_Name_controller.text,username_controller.text,userpassword_controller.text);
 
                           var _userService = UserService();
                           var result = await _userService.saveUser(userObject);
-                          if (result > 0) {
+                          var user = await _userService
+                              .getUserId(username_controller.text);
+                              user = User.fromMap(user.first);
+                          if (user.id != null) {
                             Navigator.pop(context);
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => MainPage()),
+                                  builder: (context) =>
+                                      MainPage(user.id)),
                             );
-                            print("user criado\n");
+                            print(user.id);
                           }
                         },
                         child: Text("Sign up",
@@ -318,16 +320,21 @@ class _LoginPageState extends State<LoginPage> {
                       child: RaisedButton(
                         onPressed: () async {
                           var _userService = UserService();
-                          var result = await _userService.readUser(username_controller.text,userpassword_controller.text);
-                          if (result != null)
+                          var result = await _userService.readUser(
+                              username_controller.text,
+                              userpassword_controller.text);
+                          var user = await _userService
+                              .getUserId(username_controller.text);
+                              user = User.fromMap(user.first);
+                          if (user.password == userpassword_controller.text) {
                             Navigator.pop(context);
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => MainPage()),
+                                  builder: (context) => MainPage(user.id)),
                             );
                             print("user logou\n");
-                          
+                          }
                         },
                         child: Text("Log in",
                             style:

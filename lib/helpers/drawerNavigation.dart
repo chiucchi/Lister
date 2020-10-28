@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lister/main.dart';
+import 'package:lister/models/category.dart';
 import 'package:lister/models/user.dart';
 import 'package:lister/screens/categories.dart';
 import 'package:lister/screens/mainPage.dart';
@@ -7,42 +8,44 @@ import 'package:lister/screens/todos_by_category.dart';
 import 'package:lister/services/category_services.dart';
 
 class DrawerNavigation extends StatefulWidget {
-  User userObject;
-
-  DrawerNavigation({userObject});
+  final int _userid;
+  DrawerNavigation(this._userid);
 
   @override
-  _DrawerNavigationState createState() => _DrawerNavigationState(userObject);
+  _DrawerNavigationState createState() => _DrawerNavigationState();
 }
 
 class _DrawerNavigationState extends State<DrawerNavigation> {
   List<Widget> _categoryList = List<Widget>();
   CategoryService _categoryService = CategoryService();
-
-  User userObject;
-  _DrawerNavigationState(this.userObject);
+  int _userid;
 
   @override
   initState() {
     super.initState();
     getAllCategories();
+    _userid = widget._userid;
   }
 
   getAllCategories() async {
     var categories = await _categoryService.readCategories();
     categories.forEach((category) {
       setState(() {
-        _categoryList.add(InkWell(
-          onTap: () => Navigator.push(
-              context,
-              new MaterialPageRoute(
-                  builder: (context) => new TodosByCategory(
-                        category: category['name'],
-                      ))),
-          child: ListTile(
-            title: Text(category['name']),
-          ),
-        ));
+        var categoryModel = Category();
+        categoryModel.userid = category['userid'];
+        if (categoryModel.userid == _userid) {
+          _categoryList.add(InkWell(
+            onTap: () => Navigator.push(
+                context,
+                new MaterialPageRoute(
+                    builder: (context) => new TodosByCategory(
+                          category: category['name'],
+                        ))),
+            child: ListTile(
+              title: Text(category['name']),
+            ),
+          ));
+        }
       });
     });
   }
@@ -67,7 +70,7 @@ class _DrawerNavigationState extends State<DrawerNavigation> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => MainPage()),
+                  MaterialPageRoute(builder: (context) => MainPage(_userid)),
                 );
               },
             ),
@@ -77,7 +80,8 @@ class _DrawerNavigationState extends State<DrawerNavigation> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => CategoriesScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => CategoriesScreen(_userid)),
                 );
               },
             ),
